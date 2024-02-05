@@ -14,20 +14,6 @@ local function get_visual_lines()
 	return { line_start, line_end, lines }
 end
 
-local function sort_desc(lines)
-	table.sort(lines, function(a, b)
-		return #a > #b
-	end)
-	return lines
-end
-
-local function sort_asc(lines)
-	table.sort(lines, function(a, b)
-		return #a < #b
-	end)
-	return lines
-end
-
 local function group_lines(lines)
 	local at = {}
 	local abs = {}
@@ -44,7 +30,7 @@ local function group_lines(lines)
 			table.insert(other, line)
 		end
 	end
-	return at, abs, rel, other
+	return { abs, at, rel, other }
 end
 
 local function group()
@@ -53,22 +39,35 @@ local function group()
 	return { line_start, line_end, at, abs, rel, other }
 end
 
-local function descending(ls)
+local sort = function(sort_fn, ls)
 	local line_start, line_end, lines = unpack(get_visual_lines())
 	if ls ~= nil then
 		lines = ls
 	end
-	local sorted = sort_desc(lines)
+	local sorted = sort_fn(lines)
 	return { line_start, line_end, sorted }
 end
 
-local function ascending(ls)
-	local line_start, line_end, lines = unpack(get_visual_lines())
-	if ls ~= nil then
-		lines = ls
-	end
-	local sorted = sort_asc(lines)
-	return { line_start, line_end, sorted }
+local function sort_lines_desc(lines)
+	table.sort(lines, function(a, b)
+		return #a > #b
+	end)
+	return lines
+end
+
+local descending = function(ls)
+	return sort(sort_lines_desc, ls)
+end
+
+local function sort_lines_asc(lines)
+	table.sort(lines, function(a, b)
+		return #a < #b
+	end)
+	return lines
+end
+
+local ascending = function(ls)
+	return sort(sort_lines_asc, ls)
 end
 
 return {

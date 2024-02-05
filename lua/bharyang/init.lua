@@ -11,25 +11,18 @@ M.BharyangDesc = function(_)
 	vim.api.nvim_buf_set_lines(0, line_start, line_end, true, lines)
 end
 
-local BharyangGroup = function(order_func)
-	local line_start, line_end, at, abs, rel, other = unpack(lib.group())
-	local _, _, at_sorted = unpack(order_func(at))
-	local _, _, abs_sorted = unpack(order_func(abs))
-	local _, _, rel_sorted = unpack(order_func(rel))
-	local _, _, other_sorted = unpack(order_func(other))
-	table.insert(abs_sorted, "\r")
-	for _, line in ipairs(at_sorted) do
-		table.insert(abs_sorted, line)
+local BharyangGroup = function(sort_func)
+	local line_start, line_end, groups = unpack(lib.group())
+	local _, first = next(groups)
+	local _, _, first_sorted = unpack(sort_func(first))
+	for _, grp in ipairs({ unpack(groups, 2, #groups) }) do
+		local _, _, grp_sorted = unpack(sort_func(grp))
+		table.insert(first_sorted, "\r")
+		for _, line in ipairs(grp_sorted) do
+			table.insert(first_sorted, line)
+		end
 	end
-	table.insert(abs_sorted, "\r")
-	for _, line in ipairs(rel_sorted) do
-		table.insert(abs_sorted, line)
-	end
-	table.insert(abs_sorted, "\r")
-	for _, line in ipairs(other_sorted) do
-		table.insert(abs_sorted, line)
-	end
-	vim.api.nvim_buf_set_lines(0, line_start, line_end, true, abs_sorted)
+	vim.api.nvim_buf_set_lines(0, line_start, line_end, true, first_sorted)
 end
 
 M.BharyangGroupDesc = function()
