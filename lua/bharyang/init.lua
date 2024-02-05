@@ -10,6 +10,37 @@ local function get_visual_lines()
   return lines
 end
 
+local function sort_desc(lines)
+  table.sort(lines, function(a, b)
+    return #a > #b
+  end)
+  return lines
+end
+
+local function sort_asc(lines)
+  table.sort(lines, function(a, b)
+    return #a < #b
+  end)
+  return lines
+end
+
+local function descending()
+  local lines = sort_desc(get_visual_lines())
+  for _, line in ipairs(lines) do
+    print(line)
+  end
+  return lines
+end
+
+local function ascending()
+  local lines = sort_asc(get_visual_lines())
+  for _, line in ipairs(lines) do
+    print(line)
+  end
+  return lines
+end
+
 return {
-  get_visual_lines = get_visual_lines,
+  asc = ascending,
+  desc = descending,
 }
