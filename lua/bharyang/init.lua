@@ -12,10 +12,15 @@ M.BharyangDesc = function(_)
 end
 
 local BharyangGroup = function(order_func)
-	local line_start, line_end, abs, rel, other = unpack(lib.group())
+	local line_start, line_end, at, abs, rel, other = unpack(lib.group())
+	local _, _, at_sorted = unpack(order_func(at))
 	local _, _, abs_sorted = unpack(order_func(abs))
 	local _, _, rel_sorted = unpack(order_func(rel))
 	local _, _, other_sorted = unpack(order_func(other))
+	table.insert(abs_sorted, "\r")
+	for _, line in ipairs(at_sorted) do
+		table.insert(abs_sorted, line)
+	end
 	table.insert(abs_sorted, "\r")
 	for _, line in ipairs(rel_sorted) do
 		table.insert(abs_sorted, line)

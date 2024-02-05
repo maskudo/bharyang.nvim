@@ -1,5 +1,7 @@
+local at_pattern = "^%s*import%s*.-%s*from%s*'@/.-';%s*$"
 local abs_pattern = "^%s*import%s*.-%s*from%s*'[^%.].-';%s*$"
 local rel_pattern = "^%s*import%s*.-%s*from%s*'%.+.-';%s*$"
+
 local function get_visual_lines()
 	local vstart = vim.fn.getpos("'<")
 
@@ -27,11 +29,14 @@ local function sort_asc(lines)
 end
 
 local function group_lines(lines)
+	local at = {}
 	local abs = {}
 	local rel = {}
 	local other = {}
 	for _, line in ipairs(lines) do
-		if line:match(abs_pattern) then
+		if line:match(at_pattern) then
+			table.insert(at, line)
+		elseif line:match(abs_pattern) then
 			table.insert(abs, line)
 		elseif line:match(rel_pattern) then
 			table.insert(rel, line)
@@ -39,13 +44,13 @@ local function group_lines(lines)
 			table.insert(other, line)
 		end
 	end
-	return abs, rel, other
+	return at, abs, rel, other
 end
 
 local function group()
 	local line_start, line_end, lines = unpack(get_visual_lines())
-	local abs, rel, other = group_lines(lines)
-	return { line_start, line_end, abs, rel, other }
+	local at, abs, rel, other = group_lines(lines)
+	return { line_start, line_end, at, abs, rel, other }
 end
 
 local function descending(ls)
